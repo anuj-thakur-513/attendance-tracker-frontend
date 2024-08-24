@@ -4,8 +4,8 @@ import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [profilePicture, setProfilePicture] = useState("./user-profile.png");
   const profileRef = useRef(null);
-  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleProfileClick = () => {
     setShowDropdown(!showDropdown);
@@ -22,6 +22,7 @@ const Header = () => {
     try {
       await axios.patch("/api/v1/auth/logout");
     } catch (e) {
+      console.error("Error logging out:", e);
     } finally {
       window.localStorage.removeItem("user");
       window.location.href = "/";
@@ -29,9 +30,25 @@ const Header = () => {
   };
 
   useEffect(() => {
+    const handleCustomStorageChange = () => {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      if (userData && userData.profilePicture) {
+        setProfilePicture(userData.profilePicture);
+      }
+    };
+
+    window.addEventListener(
+      "localStorageUserChange",
+      handleCustomStorageChange
+    );
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener(
+        "localStorageUserChange",
+        handleCustomStorageChange
+      );
     };
   }, []);
 
@@ -54,14 +71,13 @@ const Header = () => {
                 style={{ cursor: "pointer" }}
               >
                 <img
-                  src={user.profilePicture} // Replace with user's profile picture URL
+                  src={profilePicture}
                   alt="Profile"
                   className="rounded-circle"
                   width="40"
                   height="40"
                 />
               </Dropdown.Toggle>
-
               <Dropdown.Menu align="end">
                 <Dropdown.Item
                   as="button"

@@ -2,11 +2,17 @@ import axios from "axios";
 import { useEffect } from "react";
 
 const UserAuthProfile = () => {
+  const setUser = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    window.dispatchEvent(new Event("localStorageUserChange"));
+  };
+
   const logout = async () => {
     window.localStorage.removeItem("user");
     try {
       await axios.patch("/api/v1/auth/logout");
     } catch (e) {
+      console.error("Error logging out:", e);
     } finally {
       window.localStorage.removeItem("user");
       window.location.href = "/";
@@ -16,13 +22,14 @@ const UserAuthProfile = () => {
     const fetchUser = async () => {
       try {
         const res = await axios.get("/api/v1/auth/user");
-        window.localStorage.setItem("user", JSON.stringify(res.data.data.user));
+        setUser(res.data.data.user);
         if (window.location.pathname === "/") {
-          console.log("entered");
           window.location.href = "/home";
         }
       } catch (e) {
-        await logout();
+        if (window.location.pathname !== "/") {
+          await logout();
+        }
       }
     };
     fetchUser();

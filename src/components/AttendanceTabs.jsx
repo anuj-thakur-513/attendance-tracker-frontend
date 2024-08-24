@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Row, Col, Tabs, Tab } from "react-bootstrap";
 import styled from "styled-components";
 import AddSubject from "./AddSubject";
@@ -5,6 +6,8 @@ import TimeTable from "./TimeTable";
 import AttendanceRecords from "./AttendanceRecords";
 
 const AttendanceTabs = () => {
+  const [activeTab, setActiveTab] = useState("addSubject");
+
   return (
     <Row className="justify-content-center">
       <Col md={10} lg={11}>
@@ -12,20 +15,22 @@ const AttendanceTabs = () => {
           defaultActiveKey="addSubject"
           id="attendance-tabs"
           className="mb-4"
+          activeKey={activeTab}
+          onSelect={(k) => setActiveTab(k)}
         >
           <Tab eventKey="addSubject" title="Add Subject">
             <StyledTabContent>
-              <AddSubject />
+              {activeTab === "addSubject" && <AddSubject />}
             </StyledTabContent>
           </Tab>
           <Tab eventKey="manageAttendance" title="Manage Attendance">
             <StyledTabContent>
-              <AttendanceRecords />
+              {activeTab === "manageAttendance" && <AttendanceRecords />}
             </StyledTabContent>
           </Tab>
           <Tab eventKey="timeTable" title="Timetable">
             <StyledTabContent>
-              <TimeTable />
+              {activeTab === "timeTable" && <TimeTable />}
             </StyledTabContent>
           </Tab>
         </StyledTabs>

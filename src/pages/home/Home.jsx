@@ -7,7 +7,6 @@ import AttendanceTabs from "../../components/AttendanceTabs";
 const Home = () => {
   return (
     <>
-      <UserAuthProfile />
       <Header />
       <Container className="mt-4">
         <Row className="mb-5">
