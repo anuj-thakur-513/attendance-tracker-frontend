@@ -1,18 +1,33 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Spinner, Container, Card, Row, Col, Button } from "react-bootstrap";
+import {
+  Spinner,
+  Container,
+  Card,
+  Row,
+  Col,
+  Button,
+  Badge,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { capitalizeEveryWord } from "../utils/capitalize";
+import EditSubjectModal from "./EditSubjectModal";
+import { successToast } from "../utils/toastMessage";
+import styled from "styled-components";
 
 const TimeTable = () => {
   const [loading, setLoading] = useState(true);
   const [timeTable, setTimeTable] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentSubject, setCurrentSubject] = useState(null);
+  const [todayClasses, setTodayClasses] = useState([]);
 
   const fetchTimeTable = async () => {
     try {
       const res = await axios.get("/api/v1/subject/all");
       setTimeTable(res.data.data);
+      filterTodayClasses(res.data.data);
     } catch (e) {
       console.error(e);
       setTimeTable([]);
@@ -21,15 +36,46 @@ const TimeTable = () => {
     }
   };
 
+  const filterTodayClasses = (data) => {
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+    const classesToday = data.flatMap((subject) =>
+      subject.timeTable
+        .filter((item) => item.day === today)
+        .map((item) => ({
+          subjectTitle: subject.subjectTitle,
+          time: item.time,
+        }))
+    );
+    // Sort classes by time
+    const sortedClasses = classesToday.sort((a, b) => {
+      const timeA = new Date(`1970-01-01T${a.time}:00`);
+      const timeB = new Date(`1970-01-01T${b.time}:00`);
+      return timeA - timeB;
+    });
+    setTodayClasses(sortedClasses);
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this subject?")) {
       try {
         await axios.delete(`/api/v1/subject/${id}`);
+        successToast("Subject deleted successfully");
         setTimeTable(timeTable.filter((subject) => subject._id !== id));
+        fetchTimeTable();
       } catch (e) {
         console.error("Error deleting subject:", e);
       }
     }
+  };
+
+  const handleEdit = (subject) => {
+    setCurrentSubject(subject);
+    setShowEditModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowEditModal(false);
+    setCurrentSubject(null);
   };
 
   useEffect(() => {
@@ -48,13 +94,20 @@ const TimeTable = () => {
 
   return (
     <Container className="my-4">
-      <h3 className="mb-4 text-primary">Your Timetable</h3>
+      <h3 className="mb-4 text-primary text-center">Your Subjects</h3>
       {timeTable.length > 0 ? (
         <Row>
           {timeTable.map((subject) => (
-            <Col key={subject._id} md={4} className="mb-4">
-              <Card className="d-flex flex-column" style={{ height: "100%" }}>
-                <Card.Header className="bg-primary text-white">
+            <Col
+              key={subject._id}
+              xs={12}
+              sm={6}
+              md={6}
+              lg={4}
+              className="mb-4"
+            >
+              <Card className="d-flex flex-column h-100">
+                <Card.Header className="bg-primary text-white text-center">
                   {capitalizeEveryWord(subject.subjectTitle)}
                 </Card.Header>
                 <Card.Body className="flex-grow-1">
@@ -67,16 +120,27 @@ const TimeTable = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p>No timetable entries available.</p>
+                    <p className="text-center">
+                      No timetable entries available.
+                    </p>
                   )}
                 </Card.Body>
-                <Card.Footer className="d-flex justify-content-end">
+                <Card.Footer className="d-flex justify-content-between">
+                  <Button
+                    variant="warning"
+                    onClick={() => handleEdit(subject)}
+                    title="Edit"
+                    className="w-100 me-2"
+                  >
+                    <FontAwesomeIcon icon={faEdit} /> Edit
+                  </Button>
                   <Button
                     variant="danger"
                     onClick={() => handleDelete(subject._id)}
                     title="Delete"
+                    className="w-100"
                   >
-                    <FontAwesomeIcon icon={faTrash} /> Delete Subject
+                    <FontAwesomeIcon icon={faTrash} /> Delete
                   </Button>
                 </Card.Footer>
               </Card>
@@ -84,10 +148,65 @@ const TimeTable = () => {
           ))}
         </Row>
       ) : (
-        <p className="text-muted">No timetable data available.</p>
+        <p className="text-muted text-center">
+          No subjects found. Maybe it's a day off ?
+        </p>
+      )}
+      {todayClasses.length > 0 ? (
+        <TodayClassesCard className="mt-4">
+          <Card>
+            <Card.Header className="bg-primary text-white">
+              Classes Today
+            </Card.Header>
+            <Card.Body>
+              <ul className="list-unstyled">
+                {todayClasses.map((cls, index) => (
+                  <li
+                    key={index}
+                    className="mb-2 d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <strong>{capitalizeEveryWord(cls.subjectTitle)}</strong>
+                    </div>
+                    <Badge bg="success" className="ms-2">
+                      {cls.time}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            </Card.Body>
+          </Card>
+        </TodayClassesCard>
+      ) : (
+        <h5 className="text-center mt-4 text-muted">
+          No classes today. Time to relax and enjoy your free day! 🎉
+        </h5>
+      )}
+      {showEditModal && (
+        <EditSubjectModal
+          subject={currentSubject}
+          show={showEditModal}
+          onClose={handleModalClose}
+          onSubjectUpdate={fetchTimeTable}
+        />
       )}
     </Container>
   );
 };
 
 export default TimeTable;
+
+const TodayClassesCard = styled.div`
+  .card-header {
+    background-color: #007bff;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+  }
+
+  .list-unstyled li {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.5rem 0;
+  }
+`;

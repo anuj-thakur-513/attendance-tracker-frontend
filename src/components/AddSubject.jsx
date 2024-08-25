@@ -4,6 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Row, Col, Button, Form } from "react-bootstrap";
 import styled from "styled-components";
+import { successToast } from "../utils/toastMessage";
 
 const AddSubject = () => {
   const [error, setError] = useState(null);
@@ -61,6 +62,7 @@ const AddSubject = () => {
       await axios.post("/api/v1/subject/add", {
         subject: newSubject,
       });
+      successToast("Subject added successfully");
       setShowError(false);
       setError(null);
       setSubjects([...subjects, newSubject]);
