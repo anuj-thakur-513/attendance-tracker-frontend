@@ -1,9 +1,13 @@
+import { faWarning } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useState } from "react";
 import { Row, Col, Button, Form } from "react-bootstrap";
 import styled from "styled-components";
 
 const AddSubject = () => {
+  const [error, setError] = useState(null);
+  const [showError, setShowError] = useState(false);
   const [subjects, setSubjects] = useState([]);
   const [subjectName, setSubjectName] = useState("");
   const [daysWithTimes, setDaysWithTimes] = useState({
@@ -53,25 +57,34 @@ const AddSubject = () => {
       schedule,
     };
 
-    console.log(newSubject);
-
-    const res = await axios.post("/api/v1/subject/add", {
-      subject: newSubject,
-    });
-
-    console.log(res.data);
-
-    setSubjects([...subjects, newSubject]);
-    setSubjectName("");
-    setDaysWithTimes({
-      Monday: { enabled: false, time: "" },
-      Tuesday: { enabled: false, time: "" },
-      Wednesday: { enabled: false, time: "" },
-      Thursday: { enabled: false, time: "" },
-      Friday: { enabled: false, time: "" },
-      Saturday: { enabled: false, time: "" },
-      Sunday: { enabled: false, time: "" },
-    });
+    try {
+      await axios.post("/api/v1/subject/add", {
+        subject: newSubject,
+      });
+      setShowError(false);
+      setError(null);
+      setSubjects([...subjects, newSubject]);
+      setSubjectName("");
+      setDaysWithTimes({
+        Monday: { enabled: false, time: "" },
+        Tuesday: { enabled: false, time: "" },
+        Wednesday: { enabled: false, time: "" },
+        Thursday: { enabled: false, time: "" },
+        Friday: { enabled: false, time: "" },
+        Saturday: { enabled: false, time: "" },
+        Sunday: { enabled: false, time: "" },
+      });
+    } catch (error) {
+      console.error(error.message);
+      if (error.message === "Request failed with status code 409") {
+        setError("Subject already exists");
+      } else if (error.message === "Request failed with status code 400") {
+        setError("Timetable is clashing with other subject");
+      } else {
+        setError("Error adding the subject, Please try again later!");
+      }
+      setShowError(true);
+    }
   };
 
   const isAddSubjectDisabled = () => {
@@ -102,6 +115,11 @@ const AddSubject = () => {
             onChange={handleSubjectNameChange}
           />
         </Form.Group>
+        {showError && (
+          <h4 className="text-danger">
+            <FontAwesomeIcon icon={faWarning} /> {error}
+          </h4>
+        )}
         <Form.Group controlId="daysWithTimes">
           <Form.Label className="mb-3 text-muted">Schedule</Form.Label>
           {Object.keys(daysWithTimes).map((day) => (
