@@ -1,5 +1,7 @@
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Auth from "./pages/auth/Auth";
@@ -14,6 +16,7 @@ function App() {
   return (
     <>
       <UserAuthProfile />
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Auth />} />
         <Route path="/home" element={<Home />} />
