@@ -9,7 +9,7 @@ import "./App.css";
 import Home from "./pages/home/Home";
 import UserAuthProfile from "./components/UserAuthProfile";
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
