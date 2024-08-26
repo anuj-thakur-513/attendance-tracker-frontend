@@ -90,7 +90,7 @@ const DetailedView = () => {
       <h3 className="mb-4 text-primary">Detailed Attendance View</h3>
       <Row className="d-flex flex-wrap">
         {detailedAttendance.map((subject, index) => (
-          <Col key={index} xs={12} md={6} lg={4} className="mb-4">
+          <Col key={index} xs={12} lg={4} className="mb-4">
             <StyledCard
               className="h-100 shadow-sm"
               style={{
@@ -115,15 +115,18 @@ const DetailedView = () => {
                 <div className="mt-3">
                   <ProgressBar
                     now={parseFloat(subject.attendancePercentage)}
-                    label={`${subject.attendancePercentage}%`}
                     variant={
                       parseFloat(subject.attendancePercentage) >= 75
                         ? "success"
                         : "danger"
                     }
-                    className="mb-2"
+                    className="mb-1"
+                    style={{ height: "10px" }}
                   />
-                  <Card.Text>
+                  <div className="text-center">
+                    <strong>{`${subject.attendancePercentage}%`}</strong>
+                  </div>
+                  <Card.Text className="mt-2">
                     <IconWrapper>
                       <FontAwesomeIcon
                         icon={faCheckCircle}
