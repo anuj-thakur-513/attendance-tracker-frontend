@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useEffect } from "react";
 
 const UserAuthProfile = () => {
@@ -11,6 +12,8 @@ const UserAuthProfile = () => {
     window.localStorage.removeItem("user");
     try {
       await axios.patch("/api/v1/auth/logout");
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
     } catch (e) {
       console.error("Error logging out:", e);
     } finally {

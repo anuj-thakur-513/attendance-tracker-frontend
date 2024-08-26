@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { Navbar, Container, Nav, Dropdown } from "react-bootstrap";
+import Cookies from "js-cookie";
 
 const Header = () => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -21,6 +22,8 @@ const Header = () => {
     window.localStorage.removeItem("user");
     try {
       await axios.patch("/api/v1/auth/logout");
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
     } catch (e) {
       console.error("Error logging out:", e);
     } finally {

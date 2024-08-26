@@ -1,10 +1,22 @@
 import { Container, Row, Col, Card, Image } from "react-bootstrap";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import Cookies from "js-cookie";
 import axios from "axios";
 
 import "./auth.css";
 
 const Auth = () => {
+  const AUTH_COOKIE_OPTIONS = {
+    expires: 30, // 30 days
+    sameSite: "Strict",
+    path: "/",
+  };
+
+  const setAuthCookies = (accessToken, refreshToken) => {
+    Cookies.set("accessToken", accessToken, AUTH_COOKIE_OPTIONS);
+    Cookies.set("refreshToken", refreshToken, AUTH_COOKIE_OPTIONS);
+  };
+
   const handleLogin = async (googleData) => {
     const res = await axios.post(
       "/api/v1/auth/signup",
@@ -18,6 +30,8 @@ const Auth = () => {
       }
     );
     if (res?.data?.data) {
+      const { accessToken, refreshToken } = res.data.data;
+      setAuthCookies(accessToken, refreshToken);
       window.location.href = "/home";
     }
   };
