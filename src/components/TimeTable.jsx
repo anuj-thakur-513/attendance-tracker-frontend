@@ -211,7 +211,7 @@ const TimeTable = () => {
                   key={index}
                   className="mb-2 d-flex justify-content-between align-items-center"
                 >
-                  <div>
+                  <div className="text-truncate">
                     <IconWrapper>
                       <FontAwesomeIcon
                         icon={faBookOpen}

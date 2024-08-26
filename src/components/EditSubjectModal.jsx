@@ -3,7 +3,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import styled from "styled-components";
 import { capitalizeEveryWord } from "../utils/capitalize";
-import { successToast } from "../utils/toastMessage";
+import { errorToast, successToast } from "../utils/toastMessage";
 
 const EditSubjectModal = ({ subject, show, onClose, onSubjectUpdate }) => {
   const [subjectName, setSubjectName] = useState(
@@ -92,6 +92,9 @@ const EditSubjectModal = ({ subject, show, onClose, onSubjectUpdate }) => {
       onSubjectUpdate();
       onClose();
     } catch (error) {
+      if (error.message === "Request failed with status code 400") {
+        errorToast("Timetable is clashing with other subject");
+      }
       console.error("Error updating subject:", error);
     }
   };

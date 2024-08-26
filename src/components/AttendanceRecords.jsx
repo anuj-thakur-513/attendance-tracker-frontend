@@ -145,7 +145,7 @@ const AttendanceRecords = () => {
           );
 
           return (
-            <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-4">
+            <Col key={index} xs={12} sm={6} className="mb-4">
               <StyledCard>
                 <Card.Body>
                   <Card.Title className="text-truncate">
