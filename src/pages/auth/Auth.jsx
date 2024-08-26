@@ -9,6 +9,7 @@ const Auth = () => {
   const AUTH_COOKIE_OPTIONS = {
     expires: 30, // 30 days
     sameSite: "Strict",
+    secure: true,
     path: "/",
   };
 
