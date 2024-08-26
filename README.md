@@ -1,6 +1,7 @@
 # Attendance Tracker
 
 ![](/github_assets/attendance-tracker-logo.png)
+
 Track your attendance effortlessly and stay organized with our
 easy-to-use web-app.
 
