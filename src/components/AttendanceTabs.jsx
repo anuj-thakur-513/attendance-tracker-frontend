@@ -4,6 +4,7 @@ import styled from "styled-components";
 import AddSubject from "./AddSubject";
 import TimeTable from "./TimeTable";
 import AttendanceRecords from "./AttendanceRecords";
+import DetailedView from "./DetailedView";
 
 const AttendanceTabs = () => {
   const [activeTab, setActiveTab] = useState("addSubject");
@@ -31,6 +32,11 @@ const AttendanceTabs = () => {
           <Tab eventKey="timeTable" title="Timetable">
             <StyledTabContent>
               {activeTab === "timeTable" && <TimeTable />}
+            </StyledTabContent>
+          </Tab>
+          <Tab eventKey="detailedView" title="Detailed View">
+            <StyledTabContent>
+              {activeTab === "detailedView" && <DetailedView />}
             </StyledTabContent>
           </Tab>
         </StyledTabs>

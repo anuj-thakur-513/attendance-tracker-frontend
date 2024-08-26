@@ -10,8 +10,53 @@ import {
   Spinner,
 } from "react-bootstrap";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheckCircle,
+  faTimesCircle,
+  faClock,
+  faCalendarCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import { capitalizeEveryWord } from "../utils/capitalize";
 import { errorToast, successToast } from "../utils/toastMessage";
+
+const StyledCard = styled(Card)`
+  transition: all 0.3s ease-in-out;
+  height: 100%;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-footer {
+    margin-top: auto;
+    background-color: transparent;
+    border-top: none;
+  }
+`;
+
+const IconWrapper = styled.span`
+  margin-right: 8px;
+`;
+
+const StyledButton = styled(Button)`
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+`;
 
 const AttendanceRecords = () => {
   const [loading, setLoading] = useState(true);
@@ -55,7 +100,6 @@ const AttendanceRecords = () => {
       attended: attendance[`${index}-attended`] || false,
     };
 
-    console.log(lectureData);
     try {
       await axios.post(`/api/v1/attendance/${lectureData.subjectId}`, {
         lectureData,
@@ -83,7 +127,12 @@ const AttendanceRecords = () => {
 
   return (
     <Container className="my-4">
-      <h3 className="mb-4 text-primary">Attendance Records</h3>
+      <h3 className="mb-4 text-primary text-center">
+        <IconWrapper>
+          <FontAwesomeIcon icon={faCalendarCheck} />
+        </IconWrapper>
+        Attendance Records
+      </h3>
       <Row className="d-flex flex-wrap">
         {subjects.map((subject, index) => {
           const todayClass = subject.timeTable.find(
@@ -91,37 +140,39 @@ const AttendanceRecords = () => {
               item.day ===
               new Date().toLocaleDateString("en-US", { weekday: "long" })
           );
-          const isAttendanceMarked = attendanceAdded.some((att) => {
-            return att._id === subject._id;
-          });
+          const isAttendanceMarked = attendanceAdded.some(
+            (att) => att._id === subject._id
+          );
 
           return (
-            <Col
-              key={index}
-              xs={12}
-              md={6}
-              className="mb-4 d-flex align-items-stretch"
-            >
-              <StyledCard className="w-100">
+            <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-4">
+              <StyledCard>
                 <Card.Body>
                   <Card.Title className="text-truncate">
+                    <IconWrapper>
+                      <FontAwesomeIcon
+                        icon={faCheckCircle}
+                        className="text-primary"
+                      />
+                    </IconWrapper>
                     {capitalizeEveryWord(subject.subjectTitle)}
                   </Card.Title>
                   {todayClass && (
-                    <Card.Subtitle className="mb-2 text-muted">
-                      <span className="badge bg-success ms-2">Class Today</span>
-                    </Card.Subtitle>
-                  )}
-                  {todayClass && (
-                    <Card.Text>
-                      <strong>Time:</strong> {todayClass.time}
-                    </Card.Text>
+                    <>
+                      <Card.Subtitle className="mb-2 text-success">
+                        <IconWrapper>
+                          <FontAwesomeIcon icon={faClock} />
+                        </IconWrapper>
+                        Class Today at {todayClass.time}
+                      </Card.Subtitle>
+                    </>
                   )}
                   {!isAttendanceMarked ? (
                     <>
                       <Form.Group>
                         <Form.Check
-                          type="checkbox"
+                          type="switch"
+                          id={`happened-${index}`}
                           label="Class happened today"
                           onChange={(e) =>
                             handleAttendanceChange(
@@ -132,7 +183,8 @@ const AttendanceRecords = () => {
                           }
                         />
                         <Form.Check
-                          type="checkbox"
+                          type="switch"
+                          id={`attended-${index}`}
                           label="Attended"
                           disabled={!attendance[`${index}-happened`]}
                           onChange={(e) =>
@@ -146,26 +198,33 @@ const AttendanceRecords = () => {
                       </Form.Group>
                       {attendance[`${index}-happened`] &&
                         !submittedAttendance[index] && (
-                          <Button
+                          <StyledButton
                             className="mt-3"
-                            variant="primary"
+                            variant="outline-primary"
                             onClick={() => handleSubmit(index)}
                           >
                             Update
-                          </Button>
+                          </StyledButton>
                         )}
-                      {submittedAttendance[index] && (
-                        <Card.Footer className="text-success">
-                          ✅ Attendance Recorded
-                        </Card.Footer>
-                      )}
                     </>
-                  ) : (
-                    <Card.Footer className="text-success">
-                      ✅ Attendance already updated
-                    </Card.Footer>
-                  )}
+                  ) : null}
                 </Card.Body>
+                <Card.Footer
+                  className={
+                    isAttendanceMarked || submittedAttendance[index]
+                      ? "text-success"
+                      : ""
+                  }
+                >
+                  {isAttendanceMarked || submittedAttendance[index] ? (
+                    <>
+                      <IconWrapper>
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                      </IconWrapper>
+                      Attendance Recorded
+                    </>
+                  ) : null}
+                </Card.Footer>
               </StyledCard>
             </Col>
           );
@@ -176,23 +235,3 @@ const AttendanceRecords = () => {
 };
 
 export default AttendanceRecords;
-
-const StyledCard = styled(Card)`
-  .card-body {
-    display: flex;
-    flex-direction: column;
-    height: 200px; /* Set a fixed height */
-  }
-
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .card-footer {
-    margin-top: auto; /* Pushes the footer to the bottom */
-  }
-`;

@@ -10,11 +10,47 @@ import {
   Badge,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faEdit,
+  faBookOpen,
+  faClock,
+} from "@fortawesome/free-solid-svg-icons";
 import { capitalizeEveryWord } from "../utils/capitalize";
 import EditSubjectModal from "./EditSubjectModal";
 import { successToast } from "../utils/toastMessage";
 import styled from "styled-components";
+
+const StyledCard = styled(Card)`
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const IconWrapper = styled.span`
+  margin-right: 8px;
+`;
+
+const TodayClassesCard = styled(StyledCard)`
+  .card-header {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .badge {
+    font-size: 0.9rem;
+  }
+
+  .list-unstyled li {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.5rem 0;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+`;
 
 const TimeTable = () => {
   const [loading, setLoading] = useState(true);
@@ -46,7 +82,6 @@ const TimeTable = () => {
           time: item.time,
         }))
     );
-    // Sort classes by time
     const sortedClasses = classesToday.sort((a, b) => {
       const timeA = new Date(`1970-01-01T${a.time}:00`);
       const timeB = new Date(`1970-01-01T${b.time}:00`);
@@ -106,8 +141,11 @@ const TimeTable = () => {
               lg={4}
               className="mb-4"
             >
-              <Card className="d-flex flex-column h-100">
+              <StyledCard className="d-flex flex-column h-100">
                 <Card.Header className="bg-primary text-white text-center">
+                  <IconWrapper>
+                    <FontAwesomeIcon icon={faBookOpen} />
+                  </IconWrapper>
                   {capitalizeEveryWord(subject.subjectTitle)}
                 </Card.Header>
                 <Card.Body className="flex-grow-1">
@@ -115,19 +153,25 @@ const TimeTable = () => {
                     <ul className="list-unstyled">
                       {subject.timeTable.map((item) => (
                         <li key={item._id} className="mb-2">
+                          <IconWrapper>
+                            <FontAwesomeIcon
+                              icon={faClock}
+                              className="text-muted"
+                            />
+                          </IconWrapper>
                           <strong>{item.day}:</strong> {item.time}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-center">
+                    <p className="text-center text-muted">
                       No timetable entries available.
                     </p>
                   )}
                 </Card.Body>
                 <Card.Footer className="d-flex justify-content-between">
                   <Button
-                    variant="warning"
+                    variant="outline-warning"
                     onClick={() => handleEdit(subject)}
                     title="Edit"
                     className="w-100 me-2"
@@ -135,7 +179,7 @@ const TimeTable = () => {
                     <FontAwesomeIcon icon={faEdit} /> Edit
                   </Button>
                   <Button
-                    variant="danger"
+                    variant="outline-danger"
                     onClick={() => handleDelete(subject._id)}
                     title="Delete"
                     className="w-100"
@@ -143,39 +187,49 @@ const TimeTable = () => {
                     <FontAwesomeIcon icon={faTrash} /> Delete
                   </Button>
                 </Card.Footer>
-              </Card>
+              </StyledCard>
             </Col>
           ))}
         </Row>
       ) : (
         <p className="text-muted text-center">
-          No subjects found. Maybe it's a day off ?
+          No subjects found. Maybe it's a day off? 🎉
         </p>
       )}
       {todayClasses.length > 0 ? (
         <TodayClassesCard className="mt-4">
-          <Card>
-            <Card.Header className="bg-primary text-white">
-              Classes Today
-            </Card.Header>
-            <Card.Body>
-              <ul className="list-unstyled">
-                {todayClasses.map((cls, index) => (
-                  <li
-                    key={index}
-                    className="mb-2 d-flex justify-content-between align-items-center"
-                  >
-                    <div>
-                      <strong>{capitalizeEveryWord(cls.subjectTitle)}</strong>
-                    </div>
-                    <Badge bg="success" className="ms-2">
-                      {cls.time}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            </Card.Body>
-          </Card>
+          <Card.Header>
+            <IconWrapper>
+              <FontAwesomeIcon icon={faBookOpen} />
+            </IconWrapper>
+            Classes Today
+          </Card.Header>
+          <Card.Body>
+            <ul className="list-unstyled">
+              {todayClasses.map((cls, index) => (
+                <li
+                  key={index}
+                  className="mb-2 d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <IconWrapper>
+                      <FontAwesomeIcon
+                        icon={faBookOpen}
+                        className="text-primary"
+                      />
+                    </IconWrapper>
+                    <strong>{capitalizeEveryWord(cls.subjectTitle)}</strong>
+                  </div>
+                  <Badge bg="success" className="ms-2">
+                    <IconWrapper>
+                      <FontAwesomeIcon icon={faClock} />
+                    </IconWrapper>
+                    {cls.time}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          </Card.Body>
         </TodayClassesCard>
       ) : (
         <h5 className="text-center mt-4 text-muted">
@@ -195,18 +249,3 @@ const TimeTable = () => {
 };
 
 export default TimeTable;
-
-const TodayClassesCard = styled.div`
-  .card-header {
-    background-color: #007bff;
-  }
-
-  .badge {
-    font-size: 0.9rem;
-  }
-
-  .list-unstyled li {
-    border-bottom: 1px solid #e0e0e0;
-    padding: 0.5rem 0;
-  }
-`;
