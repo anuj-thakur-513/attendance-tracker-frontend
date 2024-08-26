@@ -1,7 +1,0 @@
-.card-shadow {
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.card-shadow:hover {
-  box-shadow: 0 8px 16px gray;
-}
