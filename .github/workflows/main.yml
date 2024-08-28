@@ -27,4 +27,4 @@ jobs:
             git pull https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git main
             npm install
             npm run build
-            npm run preview
+            npm run preview --host
