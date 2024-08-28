@@ -1,0 +1,42 @@
+name: Attendance Tracker Frontend PROD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: build-and-restart
+        uses: appleboy/ssh-action@master
+        env:
+          GH_USER: ${{ secrets.GH_USER }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          VITE_GOOGLE_OAUTH_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+          VITE_GOOGLE_OAUTH_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
+          VITE_API_URL: http://13.232.29.208:8000/
+        with:
+          key: ${{ secrets.EC2_SSH_KEY }}
+          host: "13.232.29.208"
+          username: "ubuntu"
+          envs: GH_USER,GH_TOKEN,VITE_GOOGLE_OAUTH_CLIENT_ID,VITE_GOOGLE_OAUTH_CLIENT_SECRET
+          script: |
+            cd frontend
+            git clone https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git
+            npm install
+            npm run build
+            npm install -g http-server
+            echo "module.exports = {
+              apps: [{
+                name: 'attendance-tracker-frontend',
+                script: 'node_modules/http-server/bin/http-server',
+                args: 'dist -p 3000',
+                env: {
+                  VITE_GOOGLE_OAUTH_CLIENT_ID: '${VITE_GOOGLE_OAUTH_CLIENT_ID}',
+                  VITE_GOOGLE_OAUTH_CLIENT_SECRET: '${VITE_GOOGLE_OAUTH_CLIENT_SECRET}',
+                }
+              }]
+            }" > ecosystem.config.js
+            sudo pm2 reload ecosystem.config.js
