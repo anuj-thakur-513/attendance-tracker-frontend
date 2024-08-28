@@ -24,7 +24,7 @@ jobs:
           envs: GH_USER,GH_TOKEN,VITE_GOOGLE_OAUTH_CLIENT_ID,VITE_GOOGLE_OAUTH_CLIENT_SECRET
           script: |
             cd frontend/attendance-tracker-frontend
-            git clone https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git
+            git pull https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git main
             npm install
             npm run build
             npm install -g http-server
