@@ -39,4 +39,4 @@ jobs:
                 }
               }]
             }" > ecosystem.config.cjs
-            sudo pm2 reload ecosystem.config.js
+            sudo pm2 reload ecosystem.config.cjs
