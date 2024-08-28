@@ -27,16 +27,4 @@ jobs:
             git pull https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git main
             npm install
             npm run build
-            npm install -g http-server
-            echo "module.exports = {
-              apps: [{
-                name: 'attendance-tracker-frontend',
-                script: 'node_modules/http-server/bin/http-server',
-                args: 'dist -p 3000',
-                env: {
-                  VITE_GOOGLE_OAUTH_CLIENT_ID: '${VITE_GOOGLE_OAUTH_CLIENT_ID}',
-                  VITE_GOOGLE_OAUTH_CLIENT_SECRET: '${VITE_GOOGLE_OAUTH_CLIENT_SECRET}',
-                }
-              }]
-            }" > ecosystem.config.js
-            sudo pm2 reload ecosystem.config.js
+            npm run preview
