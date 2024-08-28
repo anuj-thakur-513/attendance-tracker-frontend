@@ -23,8 +23,28 @@ jobs:
           username: "ubuntu"
           envs: GH_USER,GH_TOKEN,VITE_GOOGLE_OAUTH_CLIENT_ID,VITE_GOOGLE_OAUTH_CLIENT_SECRET
           script: |
+            # Navigate to the frontend project directory
             cd frontend/attendance-tracker-frontend
+
+            # Pull the latest changes from the main branch
             git pull https://${GH_USER}:${GH_TOKEN}@github.com/anuj-thakur-513/attendance-tracker-frontend.git main
+
+            # Install dependencies and build the project
             npm install
             npm run build
-            npm run preview --host
+
+            # Write the PM2 ecosystem configuration
+            echo "module.exports = {
+              apps: [{
+                name: 'attendance-tracker-frontend',
+                script: './node_modules/http-server/bin/http-server',
+                args: 'dist -p 3000',
+                env: {
+                  VITE_GOOGLE_OAUTH_CLIENT_ID: '${VITE_GOOGLE_OAUTH_CLIENT_ID}',
+                  VITE_GOOGLE_OAUTH_CLIENT_SECRET: '${VITE_GOOGLE_OAUTH_CLIENT_SECRET}',
+                }
+              }]
+            }" > ecosystem.config.js
+
+            # Reload PM2 with the new ecosystem configuration
+            sudo pm2 reload ecosystem.config.js
