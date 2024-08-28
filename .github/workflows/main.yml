@@ -38,5 +38,5 @@ jobs:
                   VITE_GOOGLE_OAUTH_CLIENT_SECRET: '${VITE_GOOGLE_OAUTH_CLIENT_SECRET}',
                 }
               }]
-            }" > ecosystem.config.js
+            }" > ecosystem.config.cjs
             sudo pm2 reload ecosystem.config.js
