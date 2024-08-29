@@ -21,7 +21,12 @@ const Header = () => {
   const handleLogout = async () => {
     window.localStorage.removeItem("user");
     try {
-      await axios.patch("/api/v1/auth/logout");
+      await axios.patch("/api/v1/auth/logout", {
+        headers: {
+          "Access-Token": Cookies.get("accessToken"),
+          "Refresh-Token": Cookies.get("refreshToken"),
+        },
+      });
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
     } catch (e) {

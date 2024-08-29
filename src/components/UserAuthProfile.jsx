@@ -11,7 +11,12 @@ const UserAuthProfile = () => {
   const logout = async () => {
     window.localStorage.removeItem("user");
     try {
-      await axios.patch("/api/v1/auth/logout");
+      await axios.patch("/api/v1/auth/logout", {
+        headers: {
+          "Access-Token": Cookies.get("accessToken"),
+          "Refresh-Token": Cookies.get("refreshToken"),
+        },
+      });
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
     } catch (e) {
@@ -24,7 +29,12 @@ const UserAuthProfile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/v1/auth/user");
+        const res = await axios.get("/api/v1/auth/user", {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        });
         setUser(res.data.data.user);
         if (window.location.pathname === "/") {
           window.location.href = "/home";

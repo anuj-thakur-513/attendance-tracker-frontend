@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import {
   Spinner,
   Container,
@@ -61,7 +62,12 @@ const TimeTable = () => {
 
   const fetchTimeTable = async () => {
     try {
-      const res = await axios.get("/api/v1/subject/all");
+      const res = await axios.get("/api/v1/subject/all", {
+        headers: {
+          "Access-Token": Cookies.get("accessToken"),
+          "Refresh-Token": Cookies.get("refreshToken"),
+        },
+      });
       setTimeTable(res.data.data);
       filterTodayClasses(res.data.data);
     } catch (e) {
@@ -93,7 +99,12 @@ const TimeTable = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this subject?")) {
       try {
-        await axios.delete(`/api/v1/subject/${id}`);
+        await axios.delete(`/api/v1/subject/${id}`, {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        });
         successToast("Subject deleted successfully");
         setTimeTable(timeTable.filter((subject) => subject._id !== id));
         fetchTimeTable();

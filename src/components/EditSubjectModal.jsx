@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
+import Cookies from "js-cookie";
 import styled from "styled-components";
 import { capitalizeEveryWord } from "../utils/capitalize";
 import { errorToast, successToast } from "../utils/toastMessage";
@@ -85,9 +86,18 @@ const EditSubjectModal = ({ subject, show, onClose, onSubjectUpdate }) => {
     };
 
     try {
-      await axios.patch(`/api/v1/subject/${subject._id}`, {
-        updatedSubject,
-      });
+      await axios.patch(
+        `/api/v1/subject/${subject._id}`,
+        {
+          updatedSubject,
+        },
+        {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        }
+      );
       successToast("Time table updated successfully");
       onSubjectUpdate();
       onClose();

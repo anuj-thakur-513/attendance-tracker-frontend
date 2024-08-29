@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useState } from "react";
 import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
+import Cookies from "js-cookie";
 import styled from "styled-components";
 import { successToast, errorToast } from "../utils/toastMessage";
 
@@ -93,9 +94,18 @@ const AddSubject = () => {
     };
 
     try {
-      await axios.post("/api/v1/subject/add", {
-        subject: newSubject,
-      });
+      await axios.post(
+        "/api/v1/subject/add",
+        {
+          subject: newSubject,
+        },
+        {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        }
+      );
       successToast("Subject added successfully");
       setSubjects([...subjects, newSubject]);
       setSubjectName("");

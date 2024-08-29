@@ -10,6 +10,7 @@ import {
   Spinner,
 } from "react-bootstrap";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -69,7 +70,12 @@ const AttendanceRecords = () => {
     const fetchAttendanceData = async () => {
       try {
         const date = new Date().toLocaleDateString();
-        const res = await axios.get(`/api/v1/attendance/today?date=${date}`);
+        const res = await axios.get(`/api/v1/attendance/today?date=${date}`, {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        });
         const { attendanceAdded, subjects } = res.data.data;
         setAttendanceAdded(attendanceAdded);
         setSubjects(subjects);
@@ -101,9 +107,18 @@ const AttendanceRecords = () => {
     };
 
     try {
-      await axios.post(`/api/v1/attendance/${lectureData.subjectId}`, {
-        lectureData,
-      });
+      await axios.post(
+        `/api/v1/attendance/${lectureData.subjectId}`,
+        {
+          lectureData,
+        },
+        {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        }
+      );
       setSubmittedAttendance((prev) => ({
         ...prev,
         [index]: true,

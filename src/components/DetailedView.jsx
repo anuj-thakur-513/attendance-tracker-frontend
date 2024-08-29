@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, ProgressBar } from "react-bootstrap";
+import Cookies from "js-cookie";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,7 +34,12 @@ const DetailedView = () => {
   useEffect(() => {
     const fetchDetailedAttendanceData = async () => {
       try {
-        const res = await axios.get("/api/v1/attendance/detailed");
+        const res = await axios.get("/api/v1/attendance/detailed", {
+          headers: {
+            "Access-Token": Cookies.get("accessToken"),
+            "Refresh-Token": Cookies.get("refreshToken"),
+          },
+        });
         setDetailedAttendance(res.data.data);
       } catch (e) {
         console.error("Error fetching detailed attendance data:", e);

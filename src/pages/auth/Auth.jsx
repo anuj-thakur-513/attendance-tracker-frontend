@@ -18,17 +18,9 @@ const Auth = () => {
   };
 
   const handleLogin = async (googleData) => {
-    const res = await axios.post(
-      "/api/v1/auth/signup",
-      {
-        credential: googleData.credential,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await axios.post("/api/v1/auth/signup", {
+      credential: googleData.credential,
+    });
     if (res?.data?.data) {
       const { accessToken, refreshToken } = res.data.data;
       setAuthCookies(accessToken, refreshToken);
