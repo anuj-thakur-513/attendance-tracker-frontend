@@ -6,7 +6,6 @@ import axios from "axios";
 import "./auth.css";
 
 const Auth = () => {
-  console.log(import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID);
   const AUTH_COOKIE_OPTIONS = {
     expires: 30, // 30 days
     sameSite: "None",
@@ -59,9 +58,7 @@ const Auth = () => {
                   reports, and stay organized like never before.
                 </Card.Text>
                 <div className="d-flex justify-content-center">
-                  <GoogleOAuthProvider
-                    clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}
-                  >
+                  <GoogleOAuthProvider clientId="143631438932-62ql0ji2u7pd2cbn4km1kclb3ibdhut1.apps.googleusercontent.com">
                     <GoogleLogin
                       onSuccess={handleLogin}
                       onFailure={handleLogin}
