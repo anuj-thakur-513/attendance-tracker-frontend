@@ -6,6 +6,7 @@ import axios from "axios";
 import "./auth.css";
 
 const Auth = () => {
+  console.log(import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID);
   const AUTH_COOKIE_OPTIONS = {
     expires: 30, // 30 days
     sameSite: "None",
