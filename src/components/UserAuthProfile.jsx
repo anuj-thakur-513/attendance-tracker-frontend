@@ -19,6 +19,7 @@ const UserAuthProfile = () => {
       });
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
+      localStorage.clear();
     } catch (e) {
       console.error("Error logging out:", e);
     } finally {

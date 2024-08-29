@@ -29,6 +29,7 @@ const Header = () => {
       });
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
+      console.log(Cookies.get("accessToken"));
     } catch (e) {
       console.error("Error logging out:", e);
     } finally {
