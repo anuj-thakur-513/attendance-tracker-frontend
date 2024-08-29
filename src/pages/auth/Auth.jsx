@@ -7,14 +7,9 @@ import "./auth.css";
 
 const Auth = () => {
   const AUTH_COOKIE_OPTIONS = {
-    httpOnly: true,
     secure: true,
     sameSite: "None",
-    path: "/",
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-    domain: ".onrender.com",
-    signed: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   };
 
   const setAuthCookies = (accessToken, refreshToken) => {
