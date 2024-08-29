@@ -43,5 +43,5 @@ jobs:
               VITE_GOOGLE_OAUTH_CLIENT_ID='${VITE_GOOGLE_OAUTH_CLIENT_ID}'
               VITE_GOOGLE_OAUTH_CLIENT_SECRET='${VITE_GOOGLE_OAUTH_CLIENT_SECRET}'
               VITE_API_URL=http://65.0.132.244:8000/
-            }" > .env
+            " > .env
             sudo pm2 reload ecosystem.config.cjs
