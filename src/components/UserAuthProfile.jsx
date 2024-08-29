@@ -17,13 +17,12 @@ const UserAuthProfile = () => {
           "Refresh-Token": Cookies.get("refreshToken"),
         },
       });
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      localStorage.clear();
     } catch (e) {
       console.error("Error logging out:", e);
     } finally {
-      window.localStorage.removeItem("user");
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      localStorage.clear();
       window.location.href = "/";
     }
   };
